@@ -5,26 +5,21 @@ public class Armstrong {
 	
 	//only for statistic
 	private long programmTime;	
-	private long programmTimeAll;	
-
-	public void calculate(int power) {
-		programmTime = System.currentTimeMillis();	
-		
+	
+	public void calculate(int power) {	
 		// set power list 0 1 8 27 etc.
-		int[] powerList = new int[10];
+		long[] powerList = new long[10];
 		for (int i = 0; i < 10; i++)
 			powerList[i] = (int) Math.pow(i, power);
 		
 		// counter 0-9 to break off the limit
-		int period = -1;
+		int period = 10;
 		
 		long result = 0;
-		
-		long minValue = (long) Math.pow(10,power-1);
-		long maxValue = (long) Math.pow(10,power);
-		
-		period = 10;
-		for (long checkNum = maxValue - 1; checkNum > minValue - 1; checkNum--) {	
+		long temp = 0;
+		long minValue = (long) Math.pow(10,power-1) - 1;
+		long maxValue = (long) Math.pow(10,power) - 1;
+		for (long checkNum = maxValue; checkNum > minValue; checkNum--) {	
 			
 			// set period to 0 each 10 numbers
 			period--;
@@ -33,32 +28,33 @@ public class Armstrong {
 			// transform 867 --> 8-6-7
 			// set result pro digit-power
 			result = 0;
-			long temp = checkNum;
+			temp = checkNum;
 			for (int k = 0; k < power; k++) {
 				result+= powerList[(int) (temp % 10)];
+				if(result > checkNum) break; // break if already too big
 				temp /= 10;
 			}
 			
-			if (result < checkNum) {
-				checkNum-= period;
-				period = 10;
+			if (result < checkNum && period < 10) {
+				//break if too small, it's 11 because first step period--
+				checkNum -= (period - 1);
+				period = 11;
 			}
 			else if (result == checkNum) resultList.add(checkNum);	
 		}
-		
-		programmTime = System.currentTimeMillis() - programmTime;
-		programmTimeAll += programmTime;
-		
+				
 	}
-	
+ 
 	public void calculateAll(int power) {
-		for (int i = 0; i <= power; i++) calculate(i);	
+		programmTime = System.currentTimeMillis();
+		for (int i = 1; i <= power; i++) calculate(i);
+		programmTime = System.currentTimeMillis() - programmTime;
 	}
 	
 	public void printResultList() {
 		for (int i = 0; i < resultList.size(); i++)
 			System.out.print(i + ": " + resultList.get(i) + "\n");
-		System.out.println("time: "+ programmTimeAll + "ms");
+		System.out.println("time: "+ programmTime + "ms");
 	}
 	
 }
